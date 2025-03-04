@@ -18,7 +18,7 @@ apt update
 # 检查 screen 是否安装
 if ! command -v screen >/dev/null 2>&1; then
     echo "未检测到 screen，正在自动安装 screen..."
-    sudo apt-get install -y screen
+     apt-get install -y screen
 else
     echo "检测到 screen 已安装。"
 fi
@@ -26,7 +26,7 @@ fi
 # 检查 python3-venv 是否可用（即检查 python3 -m venv 是否能正常运行）
 if ! python3 -m venv --help >/dev/null 2>&1; then
     echo "未检测到 python3-venv，正在自动安装 python3-venv..."
-    sudo apt-get install -y python3-venv
+     apt-get install -y python3-venv
 else
     echo "检测到 python3-venv 可用。"
 fi
