@@ -95,7 +95,7 @@ if [ ! -f "venv/bin/activate" ]; then
 fi
 
 echo "激活虚拟环境..."
-source venv/bin/activate
+. venv/bin/activate
 
 echo "升级 pip..."
 pip install --upgrade pip
@@ -118,7 +118,7 @@ if screen -list | grep -q "\.${SCREEN_SESSION}"; then
 else
     echo "使用 screen 启动项目..."
     # -dmS 新建一个后台 screen 会话，名称为指定SESSION名称，执行 python3 youknowhat.py
-    screen -dmS "${SCREEN_SESSION}" bash -c "source venv/bin/activate && python3 youknowhat.py"
+    screen -dmS "${SCREEN_SESSION}" bash -c ". venv/bin/activate && python3 youknowhat.py"
     echo "项目已在 screen 会话 '${SCREEN_SESSION}' 中启动。"
     echo "你可以使用命令 'screen -r ${SCREEN_SESSION}' 来查看输出。"
 fi
