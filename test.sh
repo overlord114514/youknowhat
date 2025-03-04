@@ -1,6 +1,40 @@
 #!/bin/bash
 set -e  # 脚本中任一命令返回非零状态时，立即退出
 
+############################################
+# 预检查：检查并安装必要的系统依赖：screen 和 python3-venv
+############################################
+
+# 检查是否存在 apt-get 工具（适用于 Debian/Ubuntu 系统）
+if ! command -v apt-get >/dev/null 2>&1; then
+    echo "错误：未检测到 apt-get 工具，本脚本自动安装依赖仅适用于 Debian/Ubuntu 系统。"
+    exit 1
+fi
+
+# 更新包列表（可选）
+echo "更新 apt 包列表..."
+sudo apt-get update
+
+# 检查 screen 是否安装
+if ! command -v screen >/dev/null 2>&1; then
+    echo "未检测到 screen，正在自动安装 screen..."
+    sudo apt-get install -y screen
+else
+    echo "检测到 screen 已安装。"
+fi
+
+# 检查 python3-venv 是否可用（即检查 python3 -m venv 是否能正常运行）
+if ! python3 -m venv --help >/dev/null 2>&1; then
+    echo "未检测到 python3-venv，正在自动安装 python3-venv..."
+    sudo apt-get install -y python3-venv
+else
+    echo "检测到 python3-venv 可用。"
+fi
+
+############################################
+# 主体部分：部署项目
+############################################
+
 # 项目 Git 仓库地址（根据实际情况修改）
 REPO_URL="https://github.com/overlord114514/youknowhat.git"
 # 本地项目目录名称（根据需要修改）
@@ -26,9 +60,9 @@ echo "当前工作目录: $(pwd)"
 echo "目录结构："
 ls -l
 
-# 检查 Python 环境是否支持 venv 模块
+# 再次检查 Python 环境是否支持 venv 模块
 if ! python3 -m venv --help >/dev/null 2>&1; then
-    echo "错误：你的 python3 环境不支持 venv 模块，请安装 python3-venv 包。"
+    echo "错误：你的 python3 环境不支持 venv 模块，请检查安装或手动安装 python3-venv 包。"
     exit 1
 fi
 
@@ -74,8 +108,8 @@ else
     echo "未找到 requirements.txt 文件，跳过依赖安装。"
 fi
 
-# 使用 screen 启动项目。确保系统已安装 screen 工具。如果没有安装，请先安装。
-# 以下配置假设项目入口为 main.py，如有需要请修改
+# 使用 screen 启动项目。确保系统已安装 screen 工具（前面已检查）。
+# 以下配置假设项目入口为 youknowhat.py，如有需要请修改
 SCREEN_SESSION="youknowhat_app"
 
 # 检查是否已经存在同名的 screen 会话，如果存在则退出，避免启动多个实例
@@ -83,7 +117,7 @@ if screen -list | grep -q "\.${SCREEN_SESSION}"; then
     echo "已存在名为 ${SCREEN_SESSION} 的 screen 会话，跳过启动。"
 else
     echo "使用 screen 启动项目..."
-    # -dmS 新建一个后台 screen 会话，名称为指定SESSION名称，执行 python3 main.py
+    # -dmS 新建一个后台 screen 会话，名称为指定SESSION名称，执行 python3 youknowhat.py
     screen -dmS "${SCREEN_SESSION}" bash -c "source venv/bin/activate && python3 youknowhat.py"
     echo "项目已在 screen 会话 '${SCREEN_SESSION}' 中启动。"
     echo "你可以使用命令 'screen -r ${SCREEN_SESSION}' 来查看输出。"
