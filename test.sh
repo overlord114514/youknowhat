@@ -13,7 +13,7 @@ fi
 
 # 更新包列表（可选）
 echo "更新 apt 包列表..."
-sudo apt-get update
+sudo apt update
 
 # 检查 screen 是否安装
 if ! command -v screen >/dev/null 2>&1; then
